@@ -1,11 +1,15 @@
 #include <io.h>
 #include <fcntl.h>
 #include <iostream>
-#include<bits/stdc++.h>
-#include<windows.h>
-#include<unistd.h>
+#include <bits/stdc++.h>
+#include <windows.h>
+#include <unistd.h>
+#include <fstream>
+#include <codecvt>
+#include <locale>
 
 using namespace std;
+string filename;
 std::string WStringToString(const std::wstring &wstr)
 {
     std::string str;
@@ -34,7 +38,7 @@ std::wstring StringToWString(const std::string& str)
 void preout(){
     cout<<"<!DOCTYPE html><html lang=\"zh\"><head><meta charset=\"UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>AkyOI~AkyooOI</title><link href=\"https://www.2weima.com/static/gongshi/mathml.css/mathml.css\" rel=\"stylesheet\" ><link rel=\"stylesheet\" href=\"../CSS/reset.css\"><link rel=\"stylesheet\" href=\"../CSS/head.css\"><link rel=\"shortcut icon\" href=\"https://s1.ax1x.com/2022/12/23/zjSIPS.jpg\"><style>.back{z-index: -999;background-color: rgba(255,255,255,0.7);position: fixed;width: 100%; height: 100%;}*{background-repeat: no-repeat;}html,main{height: auto;width: 100%;/* background-color:rgba(255,255,255,0.7); */}";
     cout<<"\n/* ------------------------------------------------------------------- */\n";
-    cout<<".prob{background-color: rgba(255, 255, 255,0.7);position: relative;top: 40px;border: 2px solid blueviolet;border-radius: 10px;width: 70%;margin-left: 15%;margin-right: 15%;line-height: 20px;}\n"
+    cout<<".prob{background-color: rgba(255, 255, 255,0.7);position: relative;top: 40px;border: 2px solid blueviolet;border-radius: 10px;width: 70%;margin-left: 15%;margin-right: 15%; line-height: 20px;}\n"
     <<".probhead{font-family: 'Cascadia Code','楷体', Courier, monospace;color: rgb(135, 0, 212);height: 50px;line-height: 50px;font-size: 40px;}\n"
     <<".cont{font-family: 'Consolas', Courier, monospace;font-size: 20px;line-height: 25px;}\n"
     <<".part{margin-bottom: 20px;line-height: 30px;font-size: 28px;font-family: 'Consolas', Courier, monospace;}"
@@ -84,6 +88,23 @@ void writesample(int label,string filename,int fd_stdout,int fd_stdin){
     //fdopen(fd_stdin,"r");
     
 }
+void addpic(){
+    wcout<<L"\nDo you want to attach a picture on the page？(1/0):";
+    int choice;
+    cin>>choice;
+    if(choice==0)return;
+    wcout<<endl;
+    wstring address;
+    wcout<<L"Input the link of the picture:";
+    wcin>>address;
+    wstring height;
+    wcout<<L"\nInput the height of the picture(units:px ect.):";
+    wcin>>height;
+    freopen(filename.c_str(),"a",stdout);
+    wcout<<L"<img src=\""<<address<<L"\" alt=\"\" height=\""<<height<<L"\">\n";
+    fclose(stdout);wcout.clear();freopen("CON","w",stdout);//<img src="https://s1.ax1x.com/2022/11/29/zdqMDS.jpg" alt="" height="500px">
+    wcout<<endl;
+}
 int main()
 {
     const int fd_stdout = dup( fileno(stdout) );
@@ -105,8 +126,8 @@ int main()
     wcout<<endl;
 
     wcout<<L"Input the Question, please add #end at the end:"<<endl;
-    string filename="A";
-    for(int i=0;i<5-problemnumber.length();i++)filename+="0";
+    filename="A";
+    for(int i=0;i<4-problemnumber.length();i++)filename+="0";
     filename+=problemnumber;
     problemhead=StringToWString(filename)+L"  "+problemhead;
     filename+=".html";
@@ -117,6 +138,7 @@ int main()
     writecontent();
     wcout<<L"\n</div><div class=\"part\"><br>[Input Form]</div><div class=\"cont\">";
     fclose(stdout);wcout.clear();freopen("CON","w",stdout);
+    addpic();
     //fdopen(fd_stdout, "w" );
     //fdopen(fd_stdin,"r");
 
@@ -143,10 +165,17 @@ int main()
     
     for(int i=1;i<=samplenum;i++)writesample(i,filename,fd_stdout,fd_stdin);
     freopen(filename.c_str(),"a",stdout);
-    wcout<<L"\n</ul><div class=\"part\"><br>[Limits]</div><div class=\"cont\">Time: ";
+    wcout<<L"\n</ul><div class=\"part\"><br>[Explanations]</div><div class=\"cont\"><div class=\"part\"><br>[Limits]</div><div class=\"cont\">Time: ";
     fclose(stdout);wcout.clear();freopen("CON","w",stdout);
     //fdopen(fd_stdout, "w" );
     //fdopen(fd_stdin,"r");
+
+    wcout<<L"Explanations of things above,add #end on the end:\n";
+    freopen(filename.c_str(),"a",stdout);
+    writecontent();
+    wcout<<L"</div><div class=\"part\"><br>[Limits]</div><div class=\"cont\">Time: ";
+    fclose(stdout);wcout.clear();freopen("CON","w",stdout);
+    addpic();
 
     wcout<<L"Time limit, in the format of number + unit (e.g. 1s, 512ms):";
     wstring timelimits;
@@ -170,13 +199,16 @@ int main()
     //fdopen(fd_stdout, "w" );
     //fdopen(fd_stdin,"r");
 
-    wcout<<L"Data Limits:";
+    wcout<<L"Data Limits,also add #end on the end:";
     wstring datalimits;
-    wcin>>datalimits;
-    wcout<<endl;
+    addpic();
     freopen(filename.c_str(),"a",stdout);
-    wcout<<datalimits;
+    // wcout<<datalimits;
+    writecontent();
     wcout<<L"\n     <br></div><br></div><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br></main><div class=\"footer\">AkyOI ~ 2022 | By Zchared </div\n</body>\n</html>";
     fclose(stdout);wcout.clear();freopen("CON","w",stdout);
+    // string filename_after="A"+filename;
+    // string command="trans.vbs \"./"+filename+"\" \"UTF-8\"";
+    // system(command.c_str());
     return 0;
 }
